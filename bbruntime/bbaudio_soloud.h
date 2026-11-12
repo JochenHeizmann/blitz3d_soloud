@@ -12,7 +12,7 @@ void bbSoundVolume(Sound *sound, float volume);
 void bbSoundPan(Sound *sound, float pan);
 void bbSoundPitch(Sound *sound, int pitch);
 uint32_t bbPlaySound(Sound *sound);
-uint32_t bbPlayMusic(BBStr* path);
+uint32_t bbPlayMusic(BBStr* path, int loop, float volume);
 void bbStopChannel(uint32_t channel);
 void bbPauseChannel(uint32_t channel);
 void bbResumeChannel(uint32_t channel);
