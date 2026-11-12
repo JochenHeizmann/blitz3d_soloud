@@ -17,8 +17,9 @@ namespace {
 		if (::debug && !soloud) RTEX("Soloud has not been initialized"); // NOLINT
 	}
 
-	SoLoud::WavStream musicStream;
-	uint32_t musicChannel;
+	const int MAX_MUSIC = 4;
+	SoLoud::WavStream musicStreams[MAX_MUSIC];
+	uint32_t musicChannels[MAX_MUSIC];
 
 	float rolloffFactor = 1.0f;
 	float dopplerFactor = 1.0f;
@@ -111,19 +112,24 @@ uint32_t bbPlay3dSound(Sound *sound, float x, float y, float z, float vx, float 
 	return soloud->play3d(sound->wav, x, y, z, vx, vy, vz, sound->volume, false, 0);
 }
 
-uint32_t bbPlayMusic(BBStr *path) {
+uint32_t bbPlayMusic(BBStr *path, int loop, float volume) {
 	if (!soloud) {
 		delete path;
 		return 0;
 	}
-	if (musicChannel) {
-		soloud->stop(musicChannel);
-		musicChannel = 0;
+	int i = 0;
+	while (i < MAX_MUSIC && soloud->isValidVoiceHandle(musicChannels[i])) ++i;
+	if (i == MAX_MUSIC) {
+		delete path;
+		if (::debug) RTEX("Too many music channels playing"); // NOLINT
+		return 0;
 	}
-	auto r = musicStream.load(path->c_str());
+	auto &stream = musicStreams[i];
+	auto r = stream.load(path->c_str());
 	delete path;
 	if (r != SoLoud::SO_NO_ERROR) return 0;
-	return musicChannel = soloud->play(musicStream);
+	stream.setLooping(loop != 0);
+	return musicChannels[i] = soloud->play(stream, volume);
 }
 
 void bbStopChannel(uint32_t channel) {
@@ -216,7 +222,7 @@ void audio_link(void(*rtSym)(const char *, void *)) {
 	rtSym("SoundVolume%sound#volume", bbSoundVolume);
 	rtSym("SoundPan%sound#pan", bbSoundPan);
 	rtSym("%PlaySound%sound", bbPlaySound);
-	rtSym("%PlayMusic$midifile", bbPlayMusic);
+	rtSym("%PlayMusic$midifile%loop=0#volume=1", bbPlayMusic);
 	rtSym("StopChannel%channel", bbStopChannel);
 	rtSym("PauseChannel%channel", bbPauseChannel);
 	rtSym("ResumeChannel%channel", bbResumeChannel);
