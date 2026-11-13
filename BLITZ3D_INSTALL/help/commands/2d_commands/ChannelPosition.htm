@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>ChannelPosition# (channel_handle)</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+channel_handle = channel returned by PlaySound, Play3DSound or PlayMusic
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the current play position of the channel in seconds. Works for streamed music (PlayMusic) and loaded sounds. When a looping channel wraps around, the position starts again at 0.<br />
+<br />
+Returns 0 if the channel is not playing (anymore).
+</td>
+</tr>
+</table>
+<h1>Example</h1>
+<table>
+<tr>
+<td>
+music = PlayMusic(&quot;music.ogg&quot;, True)<br />
+fft = CreateBank(256 * 4)<br />
+Print &quot;Length: &quot; + ChannelLength(music) + &quot; seconds&quot;<br />
+SeekChannel music, 30<br />
+While ChannelPlaying(music) And Not KeyHit(1)<br />
+	ChannelFFT music, fft<br />
+	Print ChannelPosition(music) + &quot;s, bass: &quot; + PeekFloat(fft, 4)<br />
+	Delay 100<br />
+Wend<br />
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+</body>
+</html>
