@@ -20,6 +20,10 @@ void bbChannelVolume(uint32_t channel, float volume);
 void bbChannelPan(uint32_t channel, float pan);
 void bbChannelPitch(uint32_t channel, int pitch);
 int bbChannelPlaying(uint32_t channel);
+float bbChannelPosition(uint32_t channel);
+float bbChannelLength(uint32_t channel);
+int bbSeekChannel(uint32_t channel, float seconds);
+int bbChannelFFT(uint32_t channel, struct bbBank *bank);
 
 // ***** INTERNAL *****
 uint32_t bbPlay3dSound(Sound* sound,float x, float y, float z, float vx, float vy, float vz);

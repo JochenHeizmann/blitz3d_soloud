@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>ChannelFFT (channel_handle, bank)</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+channel_handle = channel returned by PlaySound, Play3DSound or PlayMusic, or 0 for the final mix<br />
+bank = bank to receive the spectrum, 256 floats = 1024 bytes
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Writes the current frequency spectrum of a channel into a bank, for example for a music visualizer. Up to 256 float values are written (fewer if the bank is smaller), read them with PeekFloat(bank, index * 4). Index 0 is the lowest frequency, index i covers roughly i * samplerate / 512 Hz. The values are unscaled magnitudes (the same as SoLoud's calcFFT), scale them to taste.<br />
+<br />
+For a channel the spectrum is taken from the sound itself, before ChannelVolume/ChannelPan are applied, so it also works for a channel playing at volume 0. With channel_handle 0 the spectrum of the final audio output is returned (after all volumes, so silence gives 0 values; the first call after program start returns 0 values).<br />
+<br />
+Returns the number of values written, or 0 if the channel is not playing (anymore), in which case the bank is filled with zeros.
+</td>
+</tr>
+</table>
+<h1>Example</h1>
+<table>
+<tr>
+<td>
+music = PlayMusic(&quot;music.ogg&quot;, True)<br />
+fft = CreateBank(256 * 4)<br />
+Print &quot;Length: &quot; + ChannelLength(music) + &quot; seconds&quot;<br />
+SeekChannel music, 30<br />
+While ChannelPlaying(music) And Not KeyHit(1)<br />
+	ChannelFFT music, fft<br />
+	Print ChannelPosition(music) + &quot;s, bass: &quot; + PeekFloat(fft, 4)<br />
+	Delay 100<br />
+Wend<br />
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+</body>
+</html>
