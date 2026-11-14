@@ -26,6 +26,7 @@ int		 bbGraphicsHeight();
 int		 bbGraphicsDepth();
 int		 bbAvailVidMem();
 int		 bbTotalVidMem();
+int		 bbGfxMaxRenderSize();
 
 //mode functions
 void	 bbGraphics( int w,int h,int d,int mode );

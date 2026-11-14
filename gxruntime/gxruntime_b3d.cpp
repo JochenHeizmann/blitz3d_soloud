@@ -1,5 +1,6 @@
 #include "std.h"
 #include "gxruntime.h"
+#include "gxd3dpatch.h"
 #include "zmouse.h"
 
 #ifndef SPI_SETMOUSESPEED
@@ -23,6 +24,7 @@ static string app_title;
 static string app_close;
 static gxRuntime *runtime;
 static bool busy,suspended;
+static bool d3d_patched;	//2048 pixel limit of Direct3D 7 lifted (gxd3dpatch.cpp)
 static volatile bool run_flag;
 static DDSURFACEDESC2 desktop_desc;
 
@@ -124,6 +126,7 @@ gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
 
 	CoInitialize( 0 );
 
+	d3d_patched=gxD3DUnlockResolution();
 	enumGfx();
 	TIMECAPS tc;
 	timeGetDevCaps( &tc,sizeof(tc) );
@@ -1059,6 +1062,14 @@ int gxRuntime::numGraphicsDrivers(){
 		enumGfx();
 	}
 	return drivers.size();
+}
+
+//largest render target width/height: 2048 without the patch, else the card's max texture size
+int gxRuntime::maxRenderSize(){
+	if( !d3d_patched || !drivers.size() ) return 2048;
+	const D3DDEVICEDESC7 &d=(curr_driver ? curr_driver : drivers[0])->d3d_desc;
+	int n=d.dwMaxTextureWidth<d.dwMaxTextureHeight ? d.dwMaxTextureWidth : d.dwMaxTextureHeight;
+	return n ? (n>2048 ? n : 2048) : 8192;
 }
 
 void gxRuntime::graphicsDriverInfo( int driver,string *name,int *c ){

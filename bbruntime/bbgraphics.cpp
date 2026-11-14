@@ -319,6 +319,11 @@ int  bbAvailVidMem(){
 	return gx_graphics->getAvailVidmem();
 }
 
+//largest usable graphics size (Direct3D 7 2048 pixel limit lifted by the runtime, see gxd3dpatch.cpp)
+int  bbGfxMaxRenderSize(){
+	return gx_runtime->maxRenderSize();
+}
+
 void bbSetBuffer( gxCanvas *buff ){
 	debugCanvas( buff );
 	gx_canvas=buff;
@@ -1221,6 +1226,7 @@ void graphics_link( void (*rtSym)( const char *sym,void *pc ) ){
 	rtSym( "%GfxMode3DExists%width%height%depth",bbGfxMode3DExists );
 	rtSym( "%GfxMode3D%mode",bbGfxMode3D );
 	rtSym( "%Windowed3D",bbWindowed3D );
+	rtSym( "%GfxMaxRenderSize",bbGfxMaxRenderSize );
 
 	//display mode
 	rtSym( "Graphics%width%height%depth=0%mode=0",bbGraphics );

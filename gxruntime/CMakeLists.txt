@@ -24,6 +24,8 @@ if (BB_BLITZ3D_ENABLED)
 		ddutil.h
 		gxcanvas.cpp
 		gxcanvas.h
+		gxd3dpatch.cpp
+		gxd3dpatch.h
 		gxfont.cpp
 		gxfont.h
 		gxgraphics.cpp
