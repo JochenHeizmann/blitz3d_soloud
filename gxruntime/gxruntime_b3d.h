@@ -116,6 +116,7 @@ public:
 
 	int numGraphicsDrivers();
 	void graphicsDriverInfo( int driver,std::string *name,int *caps );
+	int maxRenderSize();
 
 	int numGraphicsModes( int driver );
 	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *caps );
