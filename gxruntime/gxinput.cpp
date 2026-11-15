@@ -210,7 +210,7 @@ static Joystick *createJoystick( gxInput *input,LPCDIDEVICEINSTANCE devinst ){
 	if( input->dirInput->CreateDevice( devinst->guidInstance,(IDirectInputDevice8**)&dev,0 )>=0 ){
 		if( dev->SetCooperativeLevel( input->runtime->hwnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
 			if( dev->SetDataFormat( &c_dfDIJoystick )>=0 ){
-				int t=((devinst->dwDevType>>8)&0xff)==DI8DEVTYPE_GAMEPAD ? 1 : 2;
+				int t=(devinst->dwDevType&0xff)==DI8DEVTYPE_GAMEPAD ? 1 : 2;
 				return d_new Joystick( input,dev,t );
 			}
 		}
@@ -220,8 +220,6 @@ static Joystick *createJoystick( gxInput *input,LPCDIDEVICEINSTANCE devinst ){
 }
 
 static BOOL CALLBACK enumJoystick( LPCDIDEVICEINSTANCE devinst,LPVOID pvRef ){
-
-	if( (devinst->dwDevType&0xff)!=DI8DEVTYPE_JOYSTICK ) return DIENUM_CONTINUE;
 
 	if( Joystick *joy=createJoystick( (gxInput*)pvRef,devinst ) ){
 		joysticks.push_back( joy );
@@ -234,7 +232,8 @@ runtime(rt),dirInput(di){
 	keyboard = createKeyboard(this);
 	mouse = createMouse(this);
 	joysticks.clear();
-	dirInput->EnumDevices( DI8DEVTYPE_JOYSTICK,enumJoystick,this,DIEDFL_ATTACHEDONLY );
+	// DI8 splits joysticks and gamepads (Xbox pads) into separate types, the class covers both
+	dirInput->EnumDevices( DI8DEVCLASS_GAMECTRL,enumJoystick,this,DIEDFL_ATTACHEDONLY );
 }
 
 gxInput::~gxInput(){
