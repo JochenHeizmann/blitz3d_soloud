@@ -457,6 +457,8 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 		case WM_KEYDOWN:case WM_SYSKEYDOWN:
 			if( lparam & 0x40000000 ) break;
 			if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) input->wm_keydown( n );
+			//key messages never reach DefWindowProc, so Alt+F4 would not turn into WM_CLOSE on its own
+			if( msg==WM_SYSKEYDOWN && wparam==VK_F4 ) PostMessage( hwnd,WM_CLOSE,0,0 );
 			break;
 		case WM_KEYUP:case WM_SYSKEYUP:
 			if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) input->wm_keyup( n );
